@@ -86,7 +86,7 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 bg-header">
       {/* Main row */}
-      <div className="mx-auto flex max-w-[1800px] items-center gap-3 px-4 py-3 md:gap-6 md:px-6 md:py-4">
+      <div className="mx-auto flex max-w-[1800px] flex-wrap items-center gap-x-2 gap-y-2.5 px-4 py-3 md:flex-nowrap md:gap-x-6 md:px-6 md:py-4">
         <button
           className="rounded-lg p-2 text-white md:hidden"
           onClick={() => setMobileOpen((v) => !v)}
@@ -101,8 +101,11 @@ export function Header() {
           </span>
         </Link>
 
-        {/* Search — protagonist */}
-        <div ref={searchRef} className="relative flex-1">
+        {/* Spacer: on mobile pushes the actions to the right (search drops to its own row) */}
+        <div className="flex-1 md:hidden" />
+
+        {/* Search — protagonist. Full-width own row on mobile, inline on desktop */}
+        <div ref={searchRef} className="relative order-last w-full md:order-none md:w-auto md:flex-1">
           <form onSubmit={handleSearchSubmit} className="relative">
             <input
               value={query}
