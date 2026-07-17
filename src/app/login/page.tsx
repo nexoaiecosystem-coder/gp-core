@@ -2,15 +2,24 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Input, Label } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { isAdminCredentials, setAdminSession } from "@/lib/adminAuth";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [form, setForm] = useState({ email: "", password: "" });
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // V1: sin conexión real a Supabase Auth todavía. Placeholder de flujo.
+    // Si son las credenciales del administrador, entra a su panel.
+    if (isAdminCredentials(form.email, form.password)) {
+      setAdminSession();
+      router.push("/admin");
+      return;
+    }
+    // V1: cuenta de cliente todavía sin conexión real a Supabase Auth.
     alert("Login simulado — todavía no conectado a Supabase Auth.");
   }
 

@@ -84,15 +84,10 @@ export function Footer() {
       <div className="border-t border-line">
         <div className="mx-auto flex max-w-[1800px] flex-col items-center justify-between gap-2 px-6 py-5 text-xs text-muted md:flex-row">
           <p>© {new Date().getFullYear()} G Packing. Todos los derechos reservados.</p>
-          <div className="flex items-center gap-4">
-            <Link href="/admin" className="hover:text-brand">
-              Panel administrador
-            </Link>
-            <p>
-              Desarrollado por{" "}
-              <span className="font-medium text-ink-soft">Victory &amp; Solutions</span>
-            </p>
-          </div>
+          <p>
+            Desarrollado por{" "}
+            <span className="font-medium text-ink-soft">Victory &amp; Solutions</span>
+          </p>
         </div>
       </div>
     </footer>
