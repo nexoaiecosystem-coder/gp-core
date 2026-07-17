@@ -16,6 +16,19 @@ export function ProductRow({ product }: { product: Product }) {
   const { getEffectivePrice } = usePriceOverrides();
   const price = getEffectivePrice(product);
   const [qty, setQty] = useState(product.minQty);
+  const unitLabel =
+    product.unit.toLowerCase().startsWith("pack") || product.unit.toLowerCase().startsWith("caja")
+      ? "pack"
+      : "unidad";
+
+  const priceBlock = (
+    <div className="text-right">
+      <p className="tabular text-lg font-bold text-ink">{formatUYU(price)}</p>
+      <p className="text-xs text-muted">
+        por {unitLabel} · {PRICE_NOTE_SHORT}
+      </p>
+    </div>
+  );
 
   return (
     <div className="flex flex-col gap-3 border-b border-line py-4 last:border-b-0 sm:flex-row sm:items-center sm:gap-4 sm:py-5">
@@ -29,10 +42,18 @@ export function ProductRow({ product }: { product: Product }) {
         </Link>
 
         <div className="min-w-0 flex-1">
-          <Link href={`/producto/${product.slug}`}>
-            <h3 className="font-medium text-ink hover:text-brand">{product.name}</h3>
-          </Link>
-          <p className="mt-0.5 text-sm text-ink-soft">{product.unit}</p>
+          {/* Name + price (price to the right of the name on mobile) */}
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <Link href={`/producto/${product.slug}`}>
+                <h3 className="line-clamp-2 font-medium text-ink hover:text-brand">{product.name}</h3>
+              </Link>
+              <p className="mt-0.5 text-sm text-ink-soft">{product.unit}</p>
+            </div>
+            {/* Price — top-right on mobile, moves to the right column on desktop */}
+            <div className="shrink-0 sm:hidden">{priceBlock}</div>
+          </div>
+
           {(product.material || (product.features && product.features.length > 0)) && (
             <div className="mt-2 flex flex-wrap gap-1.5">
               {product.material && <Badge>{product.material}</Badge>}
@@ -50,14 +71,9 @@ export function ProductRow({ product }: { product: Product }) {
         </div>
       </div>
 
-      {/* Price + actions */}
+      {/* Price (desktop only) + actions */}
       <div className="sm:flex sm:shrink-0 sm:flex-col sm:items-end sm:justify-center sm:gap-2">
-        <div className="mb-3 flex items-baseline gap-2 sm:mb-0 sm:block sm:text-right">
-          <p className="tabular text-lg font-bold text-ink">{formatUYU(price)}</p>
-          <p className="text-xs text-muted">
-            por {product.unit.toLowerCase().startsWith("pack") || product.unit.toLowerCase().startsWith("caja") ? "pack" : "unidad"} · {PRICE_NOTE_SHORT}
-          </p>
-        </div>
+        <div className="hidden sm:block">{priceBlock}</div>
 
         <div className="flex items-center gap-2">
           <div className="flex shrink-0 items-center gap-1 rounded-lg border border-line">
