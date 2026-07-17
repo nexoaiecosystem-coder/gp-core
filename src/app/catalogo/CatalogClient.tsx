@@ -258,7 +258,7 @@ export function CatalogClient() {
               </p>
             </div>
 
-            <div className="flex flex-wrap gap-2 sm:flex-nowrap">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
               <input
                 value={query}
                 onChange={(e) => {
@@ -266,24 +266,26 @@ export function CatalogClient() {
                   setPage(1);
                 }}
                 placeholder="Buscar en el catálogo..."
-                className="h-10 min-w-0 flex-1 rounded-lg border border-line bg-surface px-4 text-sm focus:border-brand focus:outline-none sm:w-56 sm:flex-none"
+                className="h-10 w-full rounded-lg border border-line bg-surface px-4 text-sm focus:border-brand focus:outline-none sm:w-56"
               />
-              <button
-                onClick={() => setFiltersOpen((v) => !v)}
-                className="flex h-10 shrink-0 items-center gap-1.5 rounded-lg border border-line px-3 text-sm text-ink-soft lg:hidden"
-              >
-                <SlidersHorizontal size={15} /> Filtros
-              </button>
-              <select
-                value={sort}
-                onChange={(e) => setSort(e.target.value as SortKey)}
-                className="h-10 min-w-0 flex-1 rounded-lg border border-line bg-surface px-3 text-sm focus:border-brand focus:outline-none sm:flex-none"
-              >
-                <option value="relevancia">Ordenar por: Relevancia</option>
-                <option value="precio-asc">Precio: menor a mayor</option>
-                <option value="precio-desc">Precio: mayor a menor</option>
-                <option value="nombre">Nombre (A-Z)</option>
-              </select>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setFiltersOpen((v) => !v)}
+                  className="flex h-10 flex-1 items-center justify-center gap-1.5 rounded-lg border border-line px-3 text-sm text-ink-soft sm:flex-none lg:hidden"
+                >
+                  <SlidersHorizontal size={15} /> Filtros
+                </button>
+                <select
+                  value={sort}
+                  onChange={(e) => setSort(e.target.value as SortKey)}
+                  className="h-10 min-w-0 flex-1 rounded-lg border border-line bg-surface px-3 text-sm focus:border-brand focus:outline-none sm:flex-none"
+                >
+                  <option value="relevancia">Ordenar por: Relevancia</option>
+                  <option value="precio-asc">Precio: menor a mayor</option>
+                  <option value="precio-desc">Precio: mayor a menor</option>
+                  <option value="nombre">Nombre (A-Z)</option>
+                </select>
+              </div>
             </div>
           </div>
 
