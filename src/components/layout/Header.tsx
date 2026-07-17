@@ -225,15 +225,16 @@ export function Header() {
 
         <Link
           href="/login"
-          className="hidden shrink-0 items-center gap-2 text-sm text-white/90 hover:text-white sm:flex"
+          aria-label="Mi cuenta / Iniciar sesión"
+          className="flex shrink-0 items-center gap-2 text-sm text-white/90 hover:text-white"
         >
-          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 sm:h-8 sm:w-8">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
               <circle cx="12" cy="7" r="4" />
             </svg>
           </span>
-          <span className="leading-tight">
+          <span className="hidden leading-tight sm:block">
             <span className="block text-xs text-white/50">Mi cuenta</span>
             <span className="block font-medium">Iniciar sesión</span>
           </span>
