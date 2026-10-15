@@ -28,14 +28,19 @@ Abrí [http://localhost:3000](http://localhost:3000).
 
 ## Catálogo digital para compartir (`/catalogo-digital`)
 
-Página **separada de la tienda**, sin carrito ni login, pensada para mandar por WhatsApp o Instagram como reemplazo del PDF.
+Catálogo **separado de la tienda**, sin carrito ni precios, para mandar por WhatsApp o Instagram.
 En producción: https://nexoaiecosystem-coder.github.io/gp-core/catalogo-digital/
 
-- Portada con datos de contacto, buscador y categorías fijas arriba (cada categoría tiene su link propio, ej. `/catalogo-digital/#bolsas`)
-- Cada producto tiene un botón de WhatsApp con el mensaje armado (nombre, presentación y código)
-- Botón **Compartir** (abre el menú nativo del celular o copia el link) y **Imprimir / PDF** para generar un PDF actualizado
-- Usa los mismos productos de `src/lib/data.ts` y los datos de `src/lib/constants.ts`: si cambiás algo ahí, cambia en la tienda y en el catálogo
-- Las páginas de la tienda viven en `src/app/(tienda)/` (el paréntesis no cambia las URLs); el catálogo digital no usa el header/footer de la tienda
+- **Inicio** (`/catalogo-digital`): portada, buscador (por nombre, medida o código) y las categorías
+- **Una página por categoría** (`/catalogo-digital/cajas`, `/catalogo-digital/bolsas`, ...) con barra para saltar entre categorías y botones Anterior / Siguiente
+- Cada ficha muestra **foto, nombre, medida y código**, y un botón de WhatsApp con el mensaje ya armado (nombre, medida y código)
+- Botones **Compartir** (menú nativo del celular o copia el link de la página actual) e **Imprimir / PDF**
+- Usa los productos de `src/lib/data.ts` (el nombre, la medida = campo `unit` y el código = `sku`)
+
+### Fotos de los productos
+
+Poné cada foto en `public/fotos/` con el **código del producto como nombre**: `public/fotos/CAJ-001.webp` (también sirve `.jpg` o `.png`).
+Se detectan solas al compilar; los productos sin foto siguen mostrando su ícono.
 
 ## Editor de precios — cómo funciona en esta V1
 
