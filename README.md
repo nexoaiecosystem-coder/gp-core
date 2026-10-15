@@ -26,6 +26,17 @@ Abrí [http://localhost:3000](http://localhost:3000).
 - **120 productos reales** en 12 categorías (Limpieza, Higiene Personal y Lavado, Baldes y Residuos, Elementos de Limpieza, Guantes y Accesorios, Papel e Higiene, Bolsas, Bandejas, Cajas, Vasos y Tapas, Bowls y Contenedores, Papelería) + Packaging Personalizado con su propia tabla de productos personalizables
 - **Panel de administrador** en `/admin` (contraseña: `gpacking2026`) con editor de precios en `/admin/productos`
 
+## Catálogo digital para compartir (`/catalogo-digital`)
+
+Página **separada de la tienda**, sin carrito ni login, pensada para mandar por WhatsApp o Instagram como reemplazo del PDF.
+En producción: https://nexoaiecosystem-coder.github.io/gp-core/catalogo-digital/
+
+- Portada con datos de contacto, buscador y categorías fijas arriba (cada categoría tiene su link propio, ej. `/catalogo-digital/#bolsas`)
+- Cada producto tiene un botón de WhatsApp con el mensaje armado (nombre, presentación y código)
+- Botón **Compartir** (abre el menú nativo del celular o copia el link) y **Imprimir / PDF** para generar un PDF actualizado
+- Usa los mismos productos de `src/lib/data.ts` y los datos de `src/lib/constants.ts`: si cambiás algo ahí, cambia en la tienda y en el catálogo
+- Las páginas de la tienda viven en `src/app/(tienda)/` (el paréntesis no cambia las URLs); el catálogo digital no usa el header/footer de la tienda
+
 ## Editor de precios — cómo funciona en esta V1
 
 Es un **placeholder funcional**, no un sistema real todavía:
