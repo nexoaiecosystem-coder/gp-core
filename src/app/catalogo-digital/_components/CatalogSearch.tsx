@@ -7,7 +7,7 @@ import { FamilyList } from "./FamilyList";
 
 /** Minúsculas y sin tildes, para que "higienico" encuentre "Higiénico". */
 function normalize(text: string) {
-  return text.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+  return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 }
 
 /** Buscador por nombre, detalle o código. Sin búsqueda muestra `children` (el índice). */
