@@ -1,100 +1,49 @@
 import Link from "next/link";
-import { Clock, CreditCard, MapPin, Truck } from "lucide-react";
-import { BUSINESS, CONTACT } from "@/lib/constants";
-import { ThemeToggle } from "@/components/layout/ThemeToggle";
-import { InstagramIcon, WhatsAppIcon } from "@/components/layout/FloatingActions";
-import { PrintButton, ShareButton } from "./_components/ShareButton";
-import { whatsappLink } from "./_components/whatsapp";
+import { CONTACT } from "@/lib/constants";
+import { ShareButton } from "./_components/ShareButton";
 
-// Catálogo para compartir: sin carrito, sin precios, sin el header de la tienda.
+// Catálogo para mostrar los productos: sin precios, sin carrito y sin el header de la tienda.
+// Estética en blanco (un solo tema, colores fijos) para que se lea como un catálogo mayorista.
 export default function CatalogoDigitalLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex min-h-full flex-1 flex-col">
-      <header className="sticky top-0 z-20 bg-header text-white print:static print:bg-transparent print:text-ink">
-        <div className="mx-auto flex h-14 max-w-6xl items-center gap-2 px-4">
-          <Link href="/catalogo-digital" className="shrink-0 leading-none">
-            <span className="font-display text-lg font-bold tracking-tight">
-              G<span className="text-accent print:text-brand">PACKING</span>
+    <div className="flex min-h-full flex-1 flex-col bg-white text-[#17191b] [color-scheme:light]">
+      <header className="sticky top-0 z-20 border-b border-[#e6e6e1] bg-white">
+        <div className="mx-auto flex h-[60px] max-w-[1080px] items-center gap-4 px-4">
+          <Link href="/catalogo-digital" className="flex shrink-0 items-center gap-4 leading-none">
+            <span className="font-display text-xl font-bold tracking-tight text-[#0d3d22]">
+              G<span className="text-[#4f7a2e]">PACKING</span>
             </span>
-            <span className="ml-2 hidden text-xs font-medium text-white/60 sm:inline print:text-muted">
-              Catálogo de productos
+            <span className="hidden border-l border-[#e6e6e1] pl-4 text-xs uppercase tracking-[0.12em] text-[#868a84] sm:inline">
+              Catálogo 2026
             </span>
           </Link>
           <div className="flex-1" />
-          <PrintButton />
           <ShareButton title="Catálogo G Packing" />
-          <ThemeToggle className="print:hidden" />
         </div>
       </header>
 
       <main className="flex-1">{children}</main>
 
-      <footer className="border-t border-line bg-surface">
-        <div className="mx-auto grid max-w-6xl gap-6 px-4 py-8 text-sm text-ink-soft sm:grid-cols-2 lg:grid-cols-4">
-          <a
-            href={whatsappLink("Hola G Packing! Vi el catálogo y quiero hacer una consulta.")}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex gap-2.5 hover:text-brand"
-          >
-            <span className="shrink-0 text-whatsapp">
-              <WhatsAppIcon size={18} />
-            </span>
-            <span>
-              Pedidos al {CONTACT.whatsappDisplay}
-              <br />
-              {CONTACT.email}
-            </span>
-          </a>
-          <p className="flex gap-2.5">
-            <Clock size={18} className="shrink-0 text-brand" /> {BUSINESS.hours}
-          </p>
-          <p className="flex gap-2.5">
-            <Truck size={18} className="shrink-0 text-brand" />
-            <span>
-              {BUSINESS.deliveryZone}
-              <br />
-              {BUSINESS.deliveryNote}
-            </span>
-          </p>
-          <p className="flex gap-2.5">
-            <CreditCard size={18} className="shrink-0 text-brand" />
-            <span>
-              {BUSINESS.paymentMethods}
-              <br />
-              {BUSINESS.billing}
-            </span>
-          </p>
-        </div>
-        <div className="mx-auto flex max-w-6xl flex-wrap gap-x-6 gap-y-2 px-4 pb-24 text-xs text-muted md:pb-8">
-          <span className="flex items-center gap-1.5">
-            <MapPin size={14} /> {CONTACT.address}
+      <footer className="border-t border-[#e6e6e1]">
+        <div className="mx-auto flex max-w-[1080px] flex-wrap gap-x-7 gap-y-1.5 px-4 py-6 text-[13.5px] text-[#4b4f52]">
+          <span>
+            <b className="font-semibold text-[#17191b]">WhatsApp</b> {CONTACT.whatsappDisplay}
           </span>
-          <a
-            href={CONTACT.instagramUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 hover:text-brand"
-          >
-            <InstagramIcon size={13} /> {CONTACT.instagramHandle}
-          </a>
-          <span>Las imágenes son ilustrativas.</span>
+          <span>
+            <b className="font-semibold text-[#17191b]">Instagram</b> {CONTACT.instagramHandle}
+          </span>
+          <span>
+            <b className="font-semibold text-[#17191b]">Email</b> {CONTACT.email}
+          </span>
+          <span>
+            <b className="font-semibold text-[#17191b]">Dirección</b> {CONTACT.address}
+          </span>
         </div>
       </footer>
-
-      <a
-        href={whatsappLink("Hola G Packing! Vi el catálogo y quiero hacer un pedido.")}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Hacer un pedido por WhatsApp"
-        className="fixed bottom-5 right-5 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-whatsapp text-white shadow-[var(--shadow-float)] transition-transform hover:scale-105 md:bottom-6 md:right-6 print:hidden"
-      >
-        <WhatsAppIcon size={28} />
-      </a>
     </div>
   );
 }

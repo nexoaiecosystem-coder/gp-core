@@ -26,21 +26,26 @@ Abrí [http://localhost:3000](http://localhost:3000).
 - **120 productos reales** en 12 categorías (Limpieza, Higiene Personal y Lavado, Baldes y Residuos, Elementos de Limpieza, Guantes y Accesorios, Papel e Higiene, Bolsas, Bandejas, Cajas, Vasos y Tapas, Bowls y Contenedores, Papelería) + Packaging Personalizado con su propia tabla de productos personalizables
 - **Panel de administrador** en `/admin` (contraseña: `gpacking2026`) con editor de precios en `/admin/productos`
 
-## Catálogo digital para compartir (`/catalogo-digital`)
+## Catálogo digital (`/catalogo-digital`)
 
-Catálogo **separado de la tienda**, sin carrito ni precios, para mandar por WhatsApp o Instagram.
+Catálogo web **para mostrar los productos**: sin precios, sin carrito y sin botones de compra, con estética en blanco y formato de lista.
 En producción: https://nexoaiecosystem-coder.github.io/gp-core/catalogo-digital/
 
-- **Inicio** (`/catalogo-digital`): portada, buscador (por nombre, medida o código) y las categorías
-- **Una página por categoría** (`/catalogo-digital/cajas`, `/catalogo-digital/bolsas`, ...) con barra para saltar entre categorías y botones Anterior / Siguiente
-- Cada ficha muestra **foto, nombre, medida y código**, y un botón de WhatsApp con el mensaje ya armado (nombre, medida y código)
-- Botones **Compartir** (menú nativo del celular o copia el link de la página actual) e **Imprimir / PDF**
-- Usa los productos de `src/lib/data.ts` (el nombre, la medida = campo `unit` y el código = `sku`)
+- **Inicio**: buscador (por producto, medida o código), lista de categorías y packaging personalizado (informativo)
+- **Una página por categoría** (`/catalogo-digital/bolsas`, ...) con pestañas para saltar entre categorías
+- Cada producto muestra foto, nombre y una fila por variante con su **detalle** y su **código**
+
+### Productos y códigos
+
+- Los productos están en `src/lib/catalogo-productos.ts` (301 productos, 14 categorías). Salen de la lista de precios de G Packing más los productos vistos en las fotos del local.
+- Código = 3 letras de la categoría + número (`LIM-001`, `BOL-014`). Estos códigos **reemplazan a los del sistema del local**.
+- Producto nuevo: agregalo al final de su categoría con el número siguiente. No reutilices ni cambies códigos existentes.
+- Filas consecutivas con el mismo nombre se muestran como un solo producto con varias variantes.
+- `docs/codigos-gpacking.xlsx` tiene la tabla completa, con una columna para anotar el código anterior de cada producto.
 
 ### Fotos de los productos
 
-Poné cada foto en `public/fotos/` con el **código del producto como nombre**: `public/fotos/CAJ-001.webp` (también sirve `.jpg` o `.png`).
-Se detectan solas al compilar; los productos sin foto siguen mostrando su ícono.
+Poné cada foto en `public/fotos/` con el **código como nombre**: `public/fotos/BOL-012.webp` (también `.jpg` o `.png`). Se detectan solas al compilar; un producto con varias variantes usa la foto del primer código que tenga. Sin foto se muestra un ícono.
 
 ## Editor de precios — cómo funciona en esta V1
 

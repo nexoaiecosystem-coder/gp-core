@@ -2,10 +2,9 @@
 
 import { useState } from "react";
 import { Check, Share2 } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 /** Abre el menú nativo de compartir (celular) o copia el link de la página actual. */
-export function ShareButton({ title, className }: { title: string; className?: string }) {
+export function ShareButton({ title }: { title: string }) {
   const [copied, setCopied] = useState(false);
 
   async function handleClick() {
@@ -15,7 +14,7 @@ export function ShareButton({ title, className }: { title: string; className?: s
         await navigator.share({ title, url });
         return;
       } catch {
-        // compartir cancelado — copiamos el link
+        // compartir cancelado: copiamos el link
       }
     }
     try {
@@ -30,24 +29,10 @@ export function ShareButton({ title, className }: { title: string; className?: s
   return (
     <button
       onClick={handleClick}
-      className={cn(
-        "flex h-9 items-center gap-1.5 rounded-full bg-white px-3.5 text-sm font-semibold text-[#082a17] transition-colors hover:bg-white/90 print:hidden",
-        className
-      )}
+      className="flex h-9 shrink-0 items-center gap-1.5 rounded-md border border-[#e6e6e1] px-3 text-sm font-medium text-[#17191b] transition-colors hover:border-[#0d3d22] hover:text-[#0d3d22]"
     >
       {copied ? <Check size={15} /> : <Share2 size={15} />}
-      {copied ? "¡Link copiado!" : "Compartir"}
-    </button>
-  );
-}
-
-export function PrintButton() {
-  return (
-    <button
-      onClick={() => window.print()}
-      className="hidden h-9 items-center gap-1.5 rounded-full bg-white/10 px-3.5 text-sm font-medium text-white transition-colors hover:bg-white/15 sm:flex print:hidden"
-    >
-      Imprimir / PDF
+      <span className="hidden sm:inline">{copied ? "¡Link copiado!" : "Compartir"}</span>
     </button>
   );
 }

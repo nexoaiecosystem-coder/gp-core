@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ArrowRight, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getCatalog } from "../_lib";
-import { ProductGrid } from "../_components/ProductTile";
+import { FamilyList } from "../_components/FamilyList";
 
 export function generateStaticParams() {
-  return getCatalog().map((c) => ({ categoria: c.slug }));
+  return getCatalog().map((s) => ({ categoria: s.slug }));
 }
 
 export async function generateMetadata({
@@ -16,15 +15,12 @@ export async function generateMetadata({
   params: Promise<{ categoria: string }>;
 }): Promise<Metadata> {
   const { categoria } = await params;
-  const category = getCatalog().find((c) => c.slug === categoria);
-  if (!category) return { title: "Categoría no encontrada | G Packing" };
+  const section = getCatalog().find((s) => s.slug === categoria);
+  if (!section) return { title: "Categoría no encontrada | G Packing" };
   return {
-    title: `${category.name} | Catálogo G Packing`,
-    description: `${category.description}. ${category.items.length} productos con medidas y códigos.`,
-    openGraph: {
-      title: `${category.name} | Catálogo G Packing`,
-      description: category.description,
-    },
+    title: `${section.name} | Catálogo G Packing`,
+    description: `${section.name}: ${section.count} productos con medida y código.`,
+    openGraph: { title: `${section.name} | Catálogo G Packing` },
   };
 }
 
@@ -35,67 +31,61 @@ export default async function CategoriaPage({
 }) {
   const { categoria } = await params;
   const catalog = getCatalog();
-  const index = catalog.findIndex((c) => c.slug === categoria);
+  const index = catalog.findIndex((s) => s.slug === categoria);
   if (index === -1) notFound();
 
-  const category = catalog[index];
+  const section = catalog[index];
   const prev = catalog[index - 1];
   const next = catalog[index + 1];
 
   return (
     <>
-      {/* Categorías: barra deslizable para saltar entre páginas */}
-      <nav className="sticky top-14 z-10 border-b border-line bg-paper/90 backdrop-blur print:hidden">
-        <div className="mx-auto flex max-w-6xl gap-2 overflow-x-auto px-4 py-3 [scrollbar-width:none]">
-          {catalog.map((c) => (
+      {/* Pestañas de categorías */}
+      <nav aria-label="Categorías" className="sticky top-[60px] z-10 border-b border-[#e6e6e1] bg-white">
+        <div className="mx-auto flex max-w-[1080px] gap-6 overflow-x-auto px-4 [scrollbar-width:none]">
+          {catalog.map((s) => (
             <Link
-              key={c.slug}
-              href={`/catalogo-digital/${c.slug}`}
-              aria-current={c.slug === category.slug ? "page" : undefined}
+              key={s.slug}
+              href={`/catalogo-digital/${s.slug}`}
+              aria-current={s.slug === section.slug ? "page" : undefined}
               className={cn(
-                "shrink-0 rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors",
-                c.slug === category.slug
-                  ? "border-transparent bg-[#0d3d22] text-white"
-                  : "border-line bg-surface text-ink-soft hover:border-brand hover:text-brand"
+                "shrink-0 border-b-2 py-2.5 text-sm",
+                s.slug === section.slug
+                  ? "border-[#0d3d22] font-semibold text-[#0d3d22]"
+                  : "border-transparent text-[#4b4f52] hover:text-[#17191b]"
               )}
             >
-              {c.name}
+              {s.name}
             </Link>
           ))}
         </div>
       </nav>
 
-      <div className="mx-auto max-w-6xl px-4 py-6 md:py-8">
-        <ol className="flex items-center gap-1 text-xs text-muted print:hidden">
-          <li>
-            <Link href="/catalogo-digital" className="hover:text-brand">
-              Catálogo
-            </Link>
-          </li>
-          <ChevronRight size={12} />
-          <li className="text-ink-soft">{category.name}</li>
-        </ol>
-
-        <div className="mb-5 mt-3 border-b border-line pb-4">
-          <h1 className="font-display text-2xl font-bold text-ink md:text-3xl">{category.name}</h1>
-          <p className="mt-1 text-sm text-muted">
-            {category.description} · {category.items.length} productos
+      <div className="mx-auto max-w-[1080px] px-4">
+        <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2 pb-4 pt-7">
+          <div>
+            <p className="text-[12.5px] text-[#868a84]">
+              <Link href="/catalogo-digital" className="hover:text-[#0d3d22]">
+                Catálogo
+              </Link>{" "}
+              / {section.name}
+            </p>
+            <h1 className="mt-1 font-display text-[28px] font-bold leading-tight tracking-tight md:text-[34px]">
+              {section.name}
+            </h1>
+          </div>
+          <p className="tabular text-[13px] text-[#868a84]">
+            {section.families.length} productos · {section.count} artículos · códigos {section.prefix}
           </p>
         </div>
 
-        <ProductGrid items={category.items} />
+        <FamilyList families={section.families} />
 
-        <div className="mt-10 grid grid-cols-2 gap-3 print:hidden">
+        <nav aria-label="Otras categorías" className="flex justify-between gap-4 pb-12 pt-7 text-sm">
           {prev ? (
-            <Link
-              href={`/catalogo-digital/${prev.slug}`}
-              className="flex items-center gap-2 rounded-xl border border-line bg-surface p-3 text-sm hover:border-brand"
-            >
-              <ArrowLeft size={16} className="shrink-0 text-muted" />
-              <span className="min-w-0">
-                <span className="block text-xs text-muted">Anterior</span>
-                <span className="block truncate font-semibold text-ink">{prev.name}</span>
-              </span>
+            <Link href={`/catalogo-digital/${prev.slug}`} className="font-semibold hover:text-[#0d3d22]">
+              <small className="block text-xs font-normal text-[#868a84]">‹ Anterior</small>
+              {prev.name}
             </Link>
           ) : (
             <span />
@@ -103,16 +93,13 @@ export default async function CategoriaPage({
           {next && (
             <Link
               href={`/catalogo-digital/${next.slug}`}
-              className="flex items-center justify-end gap-2 rounded-xl border border-line bg-surface p-3 text-right text-sm hover:border-brand"
+              className="text-right font-semibold hover:text-[#0d3d22]"
             >
-              <span className="min-w-0">
-                <span className="block text-xs text-muted">Siguiente</span>
-                <span className="block truncate font-semibold text-ink">{next.name}</span>
-              </span>
-              <ArrowRight size={16} className="shrink-0 text-muted" />
+              <small className="block text-xs font-normal text-[#868a84]">Siguiente ›</small>
+              {next.name}
             </Link>
           )}
-        </div>
+        </nav>
       </div>
     </>
   );
