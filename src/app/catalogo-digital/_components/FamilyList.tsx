@@ -1,4 +1,5 @@
-import { getProductIcon } from "@/lib/productIcons";
+import { illustrationFor } from "../_illustrations";
+import { Illustration } from "./Illustration";
 import type { Family } from "../_lib";
 
 function Thumb({ family }: { family: Family }) {
@@ -13,16 +14,14 @@ function Thumb({ family }: { family: Family }) {
       />
     );
   }
-  const Icon = getProductIcon(family.name, family.sectionSlug);
-  /* eslint-disable-next-line react-hooks/static-components -- Icon es un ícono importado existente, no un componente nuevo */
-  return <Icon className="h-1/2 w-1/2 text-[#b3b8b1]" strokeWidth={1.4} aria-hidden />;
+  return <Illustration spec={illustrationFor(family.name)} id={`il-${family.id}`} />;
 }
 
 /** Lista estilo catálogo mayorista: foto + nombre, y una fila por variante (detalle · código). */
 export function FamilyList({ families }: { families: Family[] }) {
   return (
     <div>
-      <div className="hidden grid-cols-[60px_minmax(0,1fr)_minmax(0,1fr)_96px] border-y-2 border-b border-t-[#17191b] border-b-[#e6e6e1] py-2 text-[10.5px] font-semibold uppercase tracking-[0.1em] text-[#868a84] md:grid">
+      <div className="hidden grid-cols-[84px_minmax(0,1fr)_minmax(0,1fr)_96px] border-y-2 border-b border-t-[#17191b] border-b-[#e6e6e1] py-2 text-[10.5px] font-semibold uppercase tracking-[0.1em] text-[#868a84] md:grid">
         <span className="col-span-2">Producto</span>
         <span>Detalle</span>
         <span className="text-right">Código</span>
@@ -31,9 +30,9 @@ export function FamilyList({ families }: { families: Family[] }) {
         {families.map((f) => (
           <li
             key={f.id}
-            className="grid grid-cols-[56px_minmax(0,1fr)] gap-x-3 gap-y-2 border-b border-[#e6e6e1] py-3.5 md:grid-cols-[60px_minmax(0,1fr)_minmax(0,1fr)_96px] md:gap-x-0"
+            className="grid grid-cols-[72px_minmax(0,1fr)] gap-x-3 gap-y-2 border-b border-[#e6e6e1] py-3.5 md:grid-cols-[84px_minmax(0,1fr)_minmax(0,1fr)_96px] md:gap-x-0"
           >
-            <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded border border-[#e6e6e1] bg-white md:h-[60px] md:w-[60px]">
+            <div className="flex h-[72px] w-[72px] items-center justify-center overflow-hidden rounded border border-[#e6e6e1] bg-[#fafaf8] md:h-[84px] md:w-[84px]">
               <Thumb family={f} />
             </div>
             <h3 className="self-center text-[15px] font-semibold leading-snug text-[#17191b] md:self-start md:pl-5 md:pt-0.5">

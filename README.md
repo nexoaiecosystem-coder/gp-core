@@ -43,9 +43,13 @@ En producción: https://nexoaiecosystem-coder.github.io/gp-core/catalogo-digital
 - Filas consecutivas con el mismo nombre se muestran como un solo producto con varias variantes.
 - `docs/codigos-gpacking.xlsx` tiene la tabla completa, con una columna para anotar el código anterior de cada producto.
 
-### Fotos de los productos
+### Ilustraciones y fotos de los productos
 
-Poné cada foto en `public/fotos/` con el **código como nombre**: `public/fotos/BOL-012.webp` (también `.jpg` o `.png`). Se detectan solas al compilar; un producto con varias variantes usa la foto del primer código que tenga. Sin foto se muestra un ícono.
+Cada producto muestra una ilustración estilo 3D dibujada en SVG (`src/app/catalogo-digital/_components/Illustration.tsx`). Qué dibujo y color le toca a cada producto se define por nombre en `src/app/catalogo-digital/_illustrations.ts` (gana la primera regla que coincide).
+
+Si más adelante hay foto real, tiene prioridad sobre la ilustración:
+
+Poné cada foto en `public/fotos/` con el **código como nombre**: `public/fotos/BOL-012.webp` (también `.jpg` o `.png`). Se detectan solas al compilar; un producto con varias variantes usa la foto del primer código que tenga.
 
 ## Editor de precios — cómo funciona en esta V1
 
