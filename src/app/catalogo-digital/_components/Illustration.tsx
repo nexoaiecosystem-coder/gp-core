@@ -27,28 +27,43 @@ function poly(pts: P3[]) {
   return "M" + pts.map((p) => iso(p).map((v) => v.toFixed(1)).join(" ")).join(" L") + " Z";
 }
 
-type BoxOpts = { x?: number; y?: number; z?: number; top?: string; left?: string; right?: string; stroke?: boolean };
-/** Caja: cara superior + las dos caras visibles. */
-function Box({ w, d, h, c, x = 0, y = 0, z = 0, top, left, right, stroke }: { w: number; d: number; h: number; c: string } & BoxOpts) {
+type BoxOpts = { x?: number; y?: number; z?: number; top?: string; left?: string; right?: string; stroke?: boolean; opacity?: number };
+/** Caja: cara superior + las dos caras visibles, con luz, bordes redondeados y aristas con brillo. */
+function Box({ w, d, h, c, x = 0, y = 0, z = 0, top, left, right, stroke, opacity = 1 }: { w: number; d: number; h: number; c: string } & BoxOpts) {
   const x0 = x - w / 2, x1 = x + w / 2, y0 = y - d / 2, y1 = y + d / 2, zt = z + h;
-  const line = stroke ? { stroke: shade(c, -0.35), strokeWidth: 0.6, strokeLinejoin: "round" as const } : {};
+  const L = left ?? shade(c, -0.06), R = right ?? shade(c, -0.28), T = top ?? shade(c, 0.2);
+  const soft = (f: string) => ({ fill: f, stroke: stroke ? shade(c, -0.35) : f, strokeWidth: stroke ? 0.6 : 1.1, strokeLinejoin: "round" as const });
+  const fl = poly([[x0, y1, z], [x1, y1, z], [x1, y1, zt], [x0, y1, zt]]);
+  const fr = poly([[x1, y0, z], [x1, y1, z], [x1, y1, zt], [x1, y0, zt]]);
+  const ft = poly([[x0, y0, zt], [x1, y0, zt], [x1, y1, zt], [x0, y1, zt]]);
   return (
-    <g {...line}>
-      <path d={poly([[x0, y1, z], [x1, y1, z], [x1, y1, zt], [x0, y1, zt]])} fill={left ?? shade(c, -0.08)} />
-      <path d={poly([[x1, y0, z], [x1, y1, z], [x1, y1, zt], [x1, y0, zt]])} fill={right ?? shade(c, -0.3)} />
-      <path d={poly([[x0, y0, zt], [x1, y0, zt], [x1, y1, zt], [x0, y1, zt]])} fill={top ?? shade(c, 0.22)} />
+    <g opacity={opacity}>
+      <path d={fl} {...soft(L)} />
+      <path d={fl} fill="url(#gpk-left)" />
+      <path d={fr} {...soft(R)} />
+      <path d={fr} fill="url(#gpk-right)" />
+      <path d={ft} {...soft(T)} />
+      <path d={ft} fill="url(#gpk-top)" />
+      <path d={poly([[x0, y1, zt], [x1, y1, zt], [x1, y0, zt]]).replace(" Z", "")} fill="none" stroke="#fff" strokeOpacity={0.55} strokeWidth={0.9} strokeLinecap="round" />
+      <path d={poly([[x1, y1, z + 1], [x1, y1, zt - 1]]).replace(" Z", "")} fill="none" stroke="#fff" strokeOpacity={0.3} strokeWidth={0.8} />
+      <path d={poly([[x0, y1, z], [x1, y1, z], [x1, y0, z]]).replace(" Z", "")} fill="none" stroke="#000" strokeOpacity={0.18} strokeWidth={0.8} />
     </g>
   );
 }
 
-/** Cilindro vertical apoyado en el punto iso (x, y, z). */
-function Cyl({ r, h, grad, top, x = 0, y = 0, z = 0 }: { r: number; h: number; grad: string; top: string; x?: number; y?: number; z?: number }) {
+/** Cilindro vertical apoyado en el punto iso (x, y, z). `grad` queda por compatibilidad; el volumen lo da la luz. */
+function Cyl({ r, h, grad, top, x = 0, y = 0, z = 0, body }: { r: number; h: number; grad: string; top: string; x?: number; y?: number; z?: number; body?: string }) {
   const [cx, by] = iso([x, y, z]);
   const ry = r * 0.5;
+  const d = `M${cx - r} ${by - h} L${cx - r} ${by} A${r} ${ry} 0 0 0 ${cx + r} ${by} L${cx + r} ${by - h} Z`;
   return (
     <g>
-      <path d={`M${cx - r} ${by - h} L${cx - r} ${by} A${r} ${ry} 0 0 0 ${cx + r} ${by} L${cx + r} ${by - h} Z`} fill={`url(#${grad})`} />
+      <path d={d} fill={body ?? `url(#${grad})`} />
+      <path d={d} fill="url(#gpk-cyl)" />
       <ellipse cx={cx} cy={by - h} rx={r} ry={ry} fill={top} />
+      <ellipse cx={cx} cy={by - h} rx={r} ry={ry} fill="url(#gpk-cap)" />
+      <path d={`M${cx - r} ${by - h} A${r} ${ry} 0 0 0 ${cx + r} ${by - h}`} fill="none" stroke="#fff" strokeOpacity={0.55} strokeWidth={0.9} />
+      <path d={`M${cx - r} ${by} A${r} ${ry} 0 0 0 ${cx + r} ${by}`} fill="none" stroke="#000" strokeOpacity={0.15} strokeWidth={0.8} />
     </g>
   );
 }
@@ -69,19 +84,28 @@ function Band({ r, z1, z2, fill, x = 0, y = 0, z = 0, opacity = 1 }: { r: number
 /** Recipiente abierto (vaso, balde, bowl): cono truncado con el interior a la vista. */
 function Taper({ r0, r1, h, grad, rim, inside, x = 0, y = 0, z = 0 }: { r0: number; r1: number; h: number; grad: string; rim: string; inside: string; x?: number; y?: number; z?: number }) {
   const [cx, by] = iso([x, y, z]);
+  const d = `M${cx - r1} ${by - h} L${cx - r0} ${by} A${r0} ${r0 * 0.5} 0 0 0 ${cx + r0} ${by} L${cx + r1} ${by - h} Z`;
   return (
     <g>
-      <path d={`M${cx - r1} ${by - h} L${cx - r0} ${by} A${r0} ${r0 * 0.5} 0 0 0 ${cx + r0} ${by} L${cx + r1} ${by - h} Z`} fill={`url(#${grad})`} />
+      <path d={d} fill={`url(#${grad})`} />
+      <path d={d} fill="url(#gpk-cyl)" />
       <ellipse cx={cx} cy={by - h} rx={r1} ry={r1 * 0.5} fill={inside} />
-      <ellipse cx={cx} cy={by - h} rx={r1} ry={r1 * 0.5} fill="none" stroke={rim} strokeWidth={1.6} />
+      <ellipse cx={cx} cy={by - h} rx={r1} ry={r1 * 0.5} fill="url(#gpk-inside)" />
+      <ellipse cx={cx} cy={by - h} rx={r1} ry={r1 * 0.5} fill="none" stroke={rim} strokeWidth={2} />
+      <path d={`M${cx - r1} ${by - h} A${r1} ${r1 * 0.5} 0 0 0 ${cx + r1} ${by - h}`} fill="none" stroke="#fff" strokeOpacity={0.6} strokeWidth={0.9} />
     </g>
   );
 }
 
-/** Sombra de apoyo en el piso. */
+/** Sombra de apoyo en el piso: difusa + contacto. */
 function Floor({ r = 34, x = 0, y = 0 }: { r?: number; x?: number; y?: number }) {
   const [cx, cy] = iso([x, y, 0]);
-  return <ellipse cx={cx} cy={cy + 3} rx={r} ry={r * 0.42} fill="#000" opacity={0.1} />;
+  return (
+    <g>
+      <ellipse cx={cx + 4} cy={cy + 4} rx={r * 1.15} ry={r * 0.5} fill="url(#gpk-shadow)" />
+      <ellipse cx={cx} cy={cy + 2} rx={r * 0.8} ry={r * 0.32} fill="#000" opacity={0.16} filter="url(#gpk-blur)" />
+    </g>
+  );
 }
 
 /** Brillo vertical sobre un cilindro. */
@@ -95,13 +119,43 @@ const DRAW: Record<IllustrationKind, (g: G) => ReactNode> = {
   jug: (g) => (
     <>
       <Floor r={34} />
-      <Box w={32} d={26} h={56} c={g.c} />
-      <path d={poly([[-12, 13, 14], [10, 13, 14], [10, 13, 40], [-12, 13, 40]])} fill="#fff" opacity={0.93} />
-      <path d={poly([[-9, 13, 33], [6, 13, 33], [6, 13, 36], [-9, 13, 36]])} fill={g.k} opacity={0.6} />
-      <path d={poly([[-9, 13, 24], [3, 13, 24], [3, 13, 26], [-9, 13, 26]])} fill="#9aa0a3" />
-      <Cyl r={6} h={8} x={-6} y={-4} z={56} grad={`${g.a}w`} top="#ffffff" />
-      <path d={(() => { const [a1, b1] = iso([-1, -9, 60]); const [a2, b2] = iso([12, -9, 56]); return `M${a1} ${b1} Q${(a1 + a2) / 2 + 4} ${b1 - 18} ${a2} ${b2}`; })()} fill="none" stroke="#f1f1ee" strokeWidth={4.5} strokeLinecap="round" />
-      <path d={poly([[-15, 13, 4], [-14, 13, 4], [-14, 13, 52], [-15, 13, 52]])} fill="#fff" opacity={0.35} />
+      {/* líquido */}
+      <Box w={30} d={24} h={46} z={1} c={g.c} />
+      {/* plástico translúcido */}
+      <Box w={32} d={26} h={56} c="#eef4f6" opacity={0.22} />
+      {[12, 24, 36].map((zz) => (
+        <g key={zz}>
+          <path d={poly([[-16, 13, zz], [16, 13, zz], [16, -13, zz]]).replace(" Z", "")} fill="none" stroke="#fff" strokeOpacity={0.45} strokeWidth={1.2} />
+          <path d={poly([[-16, 13, zz - 1.4], [16, 13, zz - 1.4], [16, -13, zz - 1.4]]).replace(" Z", "")} fill="none" stroke="#000" strokeOpacity={0.12} strokeWidth={0.8} />
+        </g>
+      ))}
+      {/* etiqueta */}
+      <path d={poly([[-12, 13, 14], [10, 13, 14], [10, 13, 42], [-12, 13, 42]])} fill="#fbfbf9" />
+      <path d={poly([[-12, 13, 36], [10, 13, 36], [10, 13, 42], [-12, 13, 42]])} fill={g.k} />
+      <path d={poly([[-9, 13, 29], [7, 13, 29], [7, 13, 32], [-9, 13, 32]])} fill="#2b2f31" />
+      {[19, 22, 25].map((zz) => (
+        <path key={zz} d={poly([[-9, 13, zz], [4, 13, zz], [4, 13, zz + 1.2], [-9, 13, zz + 1.2]])} fill="#a3a8ab" />
+      ))}
+      {/* tapa con estrías */}
+      <Cyl r={6.5} h={9} x={-7} y={-5} z={56} grad={`${g.a}w`} top="#ffffff" />
+      {Array.from({ length: 7 }, (_, i) => {
+        const [cx, cy] = iso([-7, -5, 56]);
+        const xx = cx - 5 + i * 1.7;
+        return <path key={i} d={`M${xx} ${cy - 1} L${xx} ${cy - 8}`} stroke="#000" strokeOpacity={0.08} strokeWidth={0.7} />;
+      })}
+      {/* asa hueca */}
+      {(() => {
+        const [a1, b1] = iso([0, -12, 56]); const [a2, b2] = iso([14, -12, 56]);
+        const d = `M${a1} ${b1} C${a1 - 2} ${b1 - 16} ${a2 + 4} ${b2 - 18} ${a2} ${b2}`;
+        return (
+          <g fill="none" strokeLinecap="round">
+            <path d={d} stroke="#c9ced1" strokeWidth={6} />
+            <path d={d} stroke="#f7f8f8" strokeWidth={4} />
+            <path d={d} stroke="#fff" strokeWidth={1} strokeOpacity={0.9} transform="translate(-0.8 -0.8)" />
+          </g>
+        );
+      })()}
+      <path d={poly([[-15, 13, 4], [-14, 13, 4], [-14, 13, 52], [-15, 13, 52]])} fill="#fff" opacity={0.5} />
     </>
   ),
   bottle: (g) => (
@@ -166,7 +220,7 @@ const DRAW: Record<IllustrationKind, (g: G) => ReactNode> = {
       <Floor r={30} />
       <Box w={28} d={24} h={58} c={g.c} />
       <Box w={31} d={27} h={6} z={58} c={g.s} />
-      <path d={poly([[-8, -13.5, 64], [8, -13.5, 64], [8, 4, 64], [-8, 4, 64]])} fill={shade(g.s, -0.35)} />
+      <path d={poly([[-8, -13.5, 64], [8, -13.5, 64], [8, 4, 64], [-8, 4, 64]])} fill={shade(g.s, -0.12)} stroke={shade(g.s, -0.3)} strokeWidth={0.6} />
       <path d={poly([[-13, 12, 6], [-12, 12, 6], [-12, 12, 54], [-13, 12, 54]])} fill="#fff" opacity={0.25} />
     </>
   ),
@@ -233,7 +287,7 @@ const DRAW: Record<IllustrationKind, (g: G) => ReactNode> = {
         return <path key={i} d={`M${a1} ${b1} Q${(a1 + a2) / 2} ${b1} ${a2} ${b2}`} stroke={shade(g.c, i % 2 ? 0.1 : -0.12)} strokeWidth={4} fill="none" strokeLinecap="round" />;
       })}
       <Cyl r={7} h={6} z={8} grad={g.b} top={shade(g.s, 0.2)} />
-      {(() => { const [a, b] = iso([0, 0, 14]); return <path d={`M${a} ${b} L${a - 30} ${b - 64}`} stroke={g.s} strokeWidth={5} strokeLinecap="round" />; })()}
+      {(() => { const [a, b] = iso([0, 0, 14]); return <path d={`M${a} ${b} L${a - 24} ${b - 50}`} stroke={g.s} strokeWidth={5} strokeLinecap="round" />; })()}
     </>
   ),
   dustpan: (g) => (
@@ -587,8 +641,54 @@ export function Illustration({ spec, id }: { spec: IllustrationSpec; id: string 
           <stop offset="0.45" stopColor={c} />
           <stop offset="1" stopColor={shade(c, -0.3)} />
         </linearGradient>
+        <linearGradient id="gpk-top" x1="0" y1="1" x2="1" y2="0">
+          <stop offset="0" stopColor="#fff" stopOpacity={0.32} />
+          <stop offset="1" stopColor="#fff" stopOpacity={0} />
+        </linearGradient>
+        <linearGradient id="gpk-left" x1="0" y1="0" x2="0.3" y2="1">
+          <stop offset="0" stopColor="#fff" stopOpacity={0.22} />
+          <stop offset="0.6" stopColor="#fff" stopOpacity={0} />
+          <stop offset="1" stopColor="#000" stopOpacity={0.12} />
+        </linearGradient>
+        <linearGradient id="gpk-right" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#000" stopOpacity={0} />
+          <stop offset="1" stopColor="#000" stopOpacity={0.22} />
+        </linearGradient>
+        <linearGradient id="gpk-cyl" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0" stopColor="#000" stopOpacity={0.12} />
+          <stop offset="0.18" stopColor="#fff" stopOpacity={0.15} />
+          <stop offset="0.27" stopColor="#fff" stopOpacity={0.55} />
+          <stop offset="0.36" stopColor="#fff" stopOpacity={0.08} />
+          <stop offset="0.75" stopColor="#000" stopOpacity={0.08} />
+          <stop offset="0.92" stopColor="#000" stopOpacity={0.3} />
+          <stop offset="1" stopColor="#fff" stopOpacity={0.1} />
+        </linearGradient>
+        <radialGradient id="gpk-cap" cx="0.35" cy="0.35" r="0.8">
+          <stop offset="0" stopColor="#fff" stopOpacity={0.45} />
+          <stop offset="1" stopColor="#000" stopOpacity={0.08} />
+        </radialGradient>
+        <radialGradient id="gpk-inside" cx="0.5" cy="0.25" r="0.75">
+          <stop offset="0" stopColor="#000" stopOpacity={0.35} />
+          <stop offset="1" stopColor="#000" stopOpacity={0} />
+        </radialGradient>
+        <radialGradient id="gpk-shadow">
+          <stop offset="0" stopColor="#000" stopOpacity={0.16} />
+          <stop offset="1" stopColor="#000" stopOpacity={0} />
+        </radialGradient>
+        <filter id="gpk-blur" x="-30%" y="-80%" width="160%" height="260%">
+          <feGaussianBlur stdDeviation={1.6} />
+        </filter>
+        <filter id="gpk-grain" x="0" y="0" width="100%" height="100%">
+          <feTurbulence type="fractalNoise" baseFrequency={1.1} numOctaves={2} seed={3} result="n" />
+          <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.18 0" result="a" />
+          <feComposite in="a" in2="SourceGraphic" operator="in" result="t" />
+          <feMerge>
+            <feMergeNode in="SourceGraphic" />
+            <feMergeNode in="t" />
+          </feMerge>
+        </filter>
       </defs>
-      {DRAW[spec.kind](g)}
+      <g filter={spec.texture ? "url(#gpk-grain)" : undefined}>{DRAW[spec.kind](g)}</g>
     </svg>
   );
 }

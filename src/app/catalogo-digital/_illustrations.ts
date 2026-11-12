@@ -10,7 +10,7 @@ export type IllustrationKind =
   | "lid" | "sticks" | "bowl" | "dip" | "paper" | "pad" | "tape" | "pen" | "stapler"
   | "calculator" | "scissors" | "cutter" | "clips" | "device" | "cartridge";
 
-export type IllustrationSpec = { kind: IllustrationKind; color: string; accent?: string; secondary?: string };
+export type IllustrationSpec = { kind: IllustrationKind; color: string; accent?: string; secondary?: string; texture?: boolean };
 
 const KRAFT = "#c49a64";
 const FOAM = "#f1f1ec";
@@ -163,8 +163,14 @@ const RULES: Rule[] = [
 
 const FALLBACK: IllustrationSpec = { kind: "box", color: KRAFT, accent: "#7a5530" };
 
+// Materiales con textura (cartón, espuma, papel, tela).
+const TEXTURED: IllustrationSpec["color"][] = [KRAFT, FOAM, WOOD, "#efe9da", "#efe9d6", "#fbfbf8"];
+const TEXTURED_KINDS: IllustrationKind[] = ["paperbag", "tray", "flatbox", "cloth", "sponge", "napkins", "paper", "jumbo", "tissue", "disc", "clamshell", "mop"];
+
 export function illustrationFor(name: string): IllustrationSpec {
-  return RULES.find(([re]) => re.test(name))?.[1] ?? FALLBACK;
+  const spec = RULES.find(([re]) => re.test(name))?.[1] ?? FALLBACK;
+  const texture = TEXTURED.includes(spec.color) || TEXTURED_KINDS.includes(spec.kind);
+  return { ...spec, texture };
 }
 
 /** Para revisar qué productos caen en la ilustración genérica. */
