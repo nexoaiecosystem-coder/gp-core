@@ -125,11 +125,11 @@ const RULES: Rule[] = [
   [/vaso pet|vaso biodegradable/i, { kind: "cup", color: CLEAR, accent: CLEAR }],
   [/vaso de espuma/i, { kind: "cup", color: FOAM, accent: FOAM }],
   [/corrugado/i, { kind: "cup", color: "#2f3133", accent: "#45484b" }],
+  [/sorbitos/i, { kind: "sticks", color: "#f0e6d0", accent: "#2f8a52" }],
   [/doble pared|polipapel|vasos impresos/i, { kind: "cup", color: "#e9dcc4", accent: "#2f8a52" }],
   [/faja/i, { kind: "cup", color: "#f4f4f2", accent: KRAFT }],
   [/portavasos/i, { kind: "tray", color: "#cdb68f" }],
   [/separador para cereales/i, { kind: "dip", color: CLEAR, accent: CLEAR }],
-  [/sorbitos/i, { kind: "sticks", color: "#f0e6d0", accent: "#2f8a52" }],
   [/brochette|sushi/i, { kind: "sticks", color: WOOD, accent: "#b5864d" }],
 
   // Bowls y dips

@@ -45,7 +45,7 @@ En producción: https://nexoaiecosystem-coder.github.io/gp-core/catalogo-digital
 
 ### Ilustraciones y fotos de los productos
 
-Cada producto muestra una ilustración isométrica (vista desde arriba y de costado) dibujada en SVG (`src/app/catalogo-digital/_components/Illustration.tsx`). Qué dibujo y color le toca a cada producto se define por nombre en `src/app/catalogo-digital/_illustrations.ts` (gana la primera regla que coincide).
+Cada producto muestra un render 3D (`public/fotos/<CÓDIGO>.webp`, generado con `scripts/renders/`). Si falta el render, se muestra una ilustración isométrica (vista desde arriba y de costado) dibujada en SVG (`src/app/catalogo-digital/_components/Illustration.tsx`). Qué dibujo y color le toca a cada producto se define por nombre en `src/app/catalogo-digital/_illustrations.ts` (gana la primera regla que coincide).
 
 Si más adelante hay foto real, tiene prioridad sobre la ilustración:
 
