@@ -26,6 +26,32 @@ Abrí [http://localhost:3000](http://localhost:3000).
 - **120 productos reales** en 12 categorías (Limpieza, Higiene Personal y Lavado, Baldes y Residuos, Elementos de Limpieza, Guantes y Accesorios, Papel e Higiene, Bolsas, Bandejas, Cajas, Vasos y Tapas, Bowls y Contenedores, Papelería) + Packaging Personalizado con su propia tabla de productos personalizables
 - **Panel de administrador** en `/admin` (contraseña: `gpacking2026`) con editor de precios en `/admin/productos`
 
+## Catálogo digital (oculto)
+
+> El catálogo se publica como sitio aparte en el repositorio **gp-catalogo** (https://nexoaiecosystem-coder.github.io/gp-catalogo/). Acá queda guardado pero **oculto**: la carpeta `src/app/_catalogo-digital` empieza con `_`, así que Next.js no la publica. Para volver a mostrarlo en este sitio, renombrala a `catalogo-digital`.
+
+Catálogo web **para mostrar los productos**: sin precios, sin carrito y sin botones de compra, con estética en blanco y formato de lista.
+
+- **Inicio**: buscador (por producto, medida o código), lista de categorías y packaging personalizado (informativo)
+- **Una página por categoría** (`/catalogo-digital/bolsas`, ...) con pestañas para saltar entre categorías
+- Cada producto muestra foto, nombre y una fila por variante con su **detalle** y su **código**
+
+### Productos y códigos
+
+- Los productos están en `src/lib/catalogo-productos.ts` (301 productos, 14 categorías). Salen de la lista de precios de G Packing más los productos vistos en las fotos del local.
+- Código = 3 letras de la categoría + número (`LIM-001`, `BOL-014`). Estos códigos **reemplazan a los del sistema del local**.
+- Producto nuevo: agregalo al final de su categoría con el número siguiente. No reutilices ni cambies códigos existentes.
+- Filas consecutivas con el mismo nombre se muestran como un solo producto con varias variantes.
+- `docs/codigos-gpacking.xlsx` tiene la tabla completa, con una columna para anotar el código anterior de cada producto.
+
+### Ilustraciones y fotos de los productos
+
+Cada producto muestra un render 3D (`public/fotos/<CÓDIGO>.webp`, generado con `scripts/renders/`). Si falta el render, se muestra una ilustración isométrica (vista desde arriba y de costado) dibujada en SVG (`src/app/_catalogo-digital/_components/Illustration.tsx`). Qué dibujo y color le toca a cada producto se define por nombre en `src/app/_catalogo-digital/_illustrations.ts` (gana la primera regla que coincide).
+
+Si más adelante hay foto real, tiene prioridad sobre la ilustración:
+
+Poné cada foto en `public/fotos/` con el **código como nombre**: `public/fotos/BOL-012.webp` (también `.jpg` o `.png`). Se detectan solas al compilar; un producto con varias variantes usa la foto del primer código que tenga.
+
 ## Editor de precios — cómo funciona en esta V1
 
 Es un **placeholder funcional**, no un sistema real todavía:

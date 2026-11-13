@@ -2,13 +2,6 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { Sora, Inter } from "next/font/google";
 import "./globals.css";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
-import { FloatingActions } from "@/components/layout/FloatingActions";
-import { CartDrawer } from "@/components/cart/CartDrawer";
-import { AddToCartToast } from "@/components/cart/AddToCartToast";
-import { CartProvider } from "@/context/CartContext";
-import { PriceOverridesProvider } from "@/context/PriceOverridesContext";
 
 const sora = Sora({
   variable: "--font-sora",
@@ -43,16 +36,7 @@ export default function RootLayout({
         <Script id="theme-init" strategy="beforeInteractive">
           {`(function(){try{var t=localStorage.getItem('gp-core-theme');if(!t){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.dataset.theme=t;}catch(e){document.documentElement.dataset.theme='light';}})();`}
         </Script>
-        <PriceOverridesProvider>
-          <CartProvider>
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
-            <FloatingActions />
-            <CartDrawer />
-            <AddToCartToast />
-          </CartProvider>
-        </PriceOverridesProvider>
+        {children}
       </body>
     </html>
   );
