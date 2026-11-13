@@ -4,7 +4,7 @@ export const CONTACT = {
   email: "j.pino62@gmail.com",
   instagramHandle: "@gpackingeinsumos",
   instagramUrl: "https://instagram.com/gpackingeinsumos",
-  address: "Canelones 1599, Montevideo, Uruguay",
+  address: "Salto 1161, Montevideo, Uruguay",
 };
 
 // ⚠️ DATOS A CONFIRMAR CON FABIÁN antes de publicar — hoy son valores de ejemplo
