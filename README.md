@@ -26,10 +26,11 @@ Abrí [http://localhost:3000](http://localhost:3000).
 - **120 productos reales** en 12 categorías (Limpieza, Higiene Personal y Lavado, Baldes y Residuos, Elementos de Limpieza, Guantes y Accesorios, Papel e Higiene, Bolsas, Bandejas, Cajas, Vasos y Tapas, Bowls y Contenedores, Papelería) + Packaging Personalizado con su propia tabla de productos personalizables
 - **Panel de administrador** en `/admin` (contraseña: `gpacking2026`) con editor de precios en `/admin/productos`
 
-## Catálogo digital (`/catalogo-digital`)
+## Catálogo digital (oculto)
+
+> El catálogo se publica como sitio aparte en el repositorio **gp-catalogo** (https://nexoaiecosystem-coder.github.io/gp-catalogo/). Acá queda guardado pero **oculto**: la carpeta `src/app/_catalogo-digital` empieza con `_`, así que Next.js no la publica. Para volver a mostrarlo en este sitio, renombrala a `catalogo-digital`.
 
 Catálogo web **para mostrar los productos**: sin precios, sin carrito y sin botones de compra, con estética en blanco y formato de lista.
-En producción: https://nexoaiecosystem-coder.github.io/gp-core/catalogo-digital/
 
 - **Inicio**: buscador (por producto, medida o código), lista de categorías y packaging personalizado (informativo)
 - **Una página por categoría** (`/catalogo-digital/bolsas`, ...) con pestañas para saltar entre categorías
@@ -45,7 +46,7 @@ En producción: https://nexoaiecosystem-coder.github.io/gp-core/catalogo-digital
 
 ### Ilustraciones y fotos de los productos
 
-Cada producto muestra un render 3D (`public/fotos/<CÓDIGO>.webp`, generado con `scripts/renders/`). Si falta el render, se muestra una ilustración isométrica (vista desde arriba y de costado) dibujada en SVG (`src/app/catalogo-digital/_components/Illustration.tsx`). Qué dibujo y color le toca a cada producto se define por nombre en `src/app/catalogo-digital/_illustrations.ts` (gana la primera regla que coincide).
+Cada producto muestra un render 3D (`public/fotos/<CÓDIGO>.webp`, generado con `scripts/renders/`). Si falta el render, se muestra una ilustración isométrica (vista desde arriba y de costado) dibujada en SVG (`src/app/_catalogo-digital/_components/Illustration.tsx`). Qué dibujo y color le toca a cada producto se define por nombre en `src/app/_catalogo-digital/_illustrations.ts` (gana la primera regla que coincide).
 
 Si más adelante hay foto real, tiene prioridad sobre la ilustración:
 

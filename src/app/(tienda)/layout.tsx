@@ -6,8 +6,7 @@ import { AddToCartToast } from "@/components/cart/AddToCartToast";
 import { CartProvider } from "@/context/CartContext";
 import { PriceOverridesProvider } from "@/context/PriceOverridesContext";
 
-// Chrome de la tienda (header, carrito, footer). El catálogo digital para
-// compartir (/catalogo-digital) vive fuera de este grupo y no lo usa.
+// Chrome de la tienda (header, carrito, footer).
 export default function TiendaLayout({
   children,
 }: Readonly<{
